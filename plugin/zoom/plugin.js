@@ -1,5 +1,5 @@
 /*!
- * reveal.js Zoom plugin
+ * reveal.js_old Zoom plugin
  */
 const Plugin = {
 
@@ -32,7 +32,7 @@ const Plugin = {
 export default () => Plugin;
 
 /*!
- * zoom.js 0.3 (modified for use with reveal.js)
+ * zoom.js_old 0.3 (modified for use with reveal.js_old)
  * http://lab.hakim.se/zoom-js
  * MIT licensed
  *

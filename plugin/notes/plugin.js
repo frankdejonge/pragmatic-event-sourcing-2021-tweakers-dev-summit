@@ -3,7 +3,7 @@ import speakerViewHTML from './speaker-view.html';
 import marked from 'marked';
 
 /**
- * Handles opening of and synchronization with the reveal.js
+ * Handles opening of and synchronization with the reveal.js_old
  * notes window.
  *
  * Handshake process:
@@ -26,7 +26,7 @@ const Plugin = () => {
             return;
         }
 
-		popup = window.open( 'about:blank', 'reveal.js - Notes', 'width=1100,height=700' );
+		popup = window.open( 'about:blank', 'reveal.js_old - Notes', 'width=1100,height=700' );
 		popup.marked = marked;
 		popup.document.write( speakerViewHTML );
 
@@ -65,7 +65,7 @@ const Plugin = () => {
 		}
 
 		/**
-		 * Calls the specified Reveal.js method with the provided argument
+		 * Calls the specified Reveal.js_old method with the provided argument
 		 * and then pushes the result to the notes frame.
 		 */
 		function callRevealApi( methodName, methodArguments, callId ) {

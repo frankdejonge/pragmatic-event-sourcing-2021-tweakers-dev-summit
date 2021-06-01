@@ -1,5 +1,5 @@
 /**
- * reveal.js
+ * reveal.js_old
  * http://revealjs.com
  * MIT licensed
  *
@@ -50,6 +50,10 @@ html.reveal-full-page {
 	&.disabled {
 		transition: none;
 	}
+}
+
+.text-left {
+  text-align: left !important;
 }
 
 .reveal .slides section .fragment.grow {

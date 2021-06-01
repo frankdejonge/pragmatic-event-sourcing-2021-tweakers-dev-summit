@@ -7,7 +7,7 @@
 
 const Plugin = () => {
 
-	// The reveal.js instance this plugin is attached to
+	// The reveal.js_old instance this plugin is attached to
 	let deck;
 
 	let searchElement;

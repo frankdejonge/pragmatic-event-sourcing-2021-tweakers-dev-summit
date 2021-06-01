@@ -41,188 +41,257 @@
 <!--    </header>-->
     <div class="reveal">
         <div class="slides">
-            <section data-background-image="images/rover.jpg">
-                <h2 style="color: #fff; text-blink: 1"><br/><br/><br/><br/>Look at a cute dog while you wait.</h2>
-            </section>
+<!--            <section data-background-image="images/rover.jpg">-->
+<!--                <h2 style="color: #fff; text-blink: 1"><br/><br/><br/><br/>Look at a cute dog while you wait.</h2>-->
+<!--            </section>-->
             <section>
                 <h2>
-                    Implementing<br/>
+                    A pragmatic introduction into<br/>
                     Event<span class="text-red">Sourcing</span>
                 </h2>
-                <h3>Tech Talks @ Mollie</h3>
+                <h3>with <span class="text-red">Frank</span> de Jonge</h3>
             </section>
 
             <section data-background-color="#3d4852">
                 <blockquote>
-                    <span class="text-red">Frank</span> de Jonge<br/>
-                    Staff Engineer<br/>
-                    I made <span class="text-red">EventSauce</span> and Flysystem<br/>
+                    <span class="text-red">Frank de Jonge</span><br/>
+                    Staff Software Engineer at Mollie Payments
                 </blockquote>
             </section>
+
+<!--            <section data-background-color="#fff">-->
+<!--                <img src="images/mollie.png" alt="Mollie" />-->
+<!--                <h3><br/>And yes, we are hiring</h3>-->
+<!--            </section>-->
+
+<!--            <section data-background-color="#3d4852">-->
+<!--                <blockquote>-->
+<!--                    <span class="text-rd">EventSourcing</span> is<br/>-->
+<!--                    not <span class="text-red">hard</span>, but<br/>-->
+<!--                    <span class="text-red">learning</span> it is.<br/>-->
+<!--                </blockquote>-->
+<!--            </section>-->
+
+<!--            <section data-background-color="#3d4852">-->
+<!--                <blockquote>-->
+<!--                    EventSourcing is a technique where decisions are made based on past events, resulting in newly recorded events that-->
+<!--                    are stored for later decisions and broadcast to interested parties so they can <span class="text-red">bla bla bla...</span>-->
+<!--                </blockquote>-->
+<!--            </section>-->
+
+<!--            <section data-background-image="https://media.giphy.com/media/CiYImHHBivpAs/giphy.gif"></section>-->
+<!--            <section data-background-image="https://giphy.com/embed/IzRWsOco0Zp7woExht"></section>-->
+
+<!--            <section data-background-image="images/how-its-made.jpg"></section>-->
+<!--            <section data-background-image="https://media.giphy.com/media/IzRWsOco0Zp7woExht/source.gif"></section>-->
 
             <section data-background-color="#3d4852">
                 <blockquote>
-                    <span class="text-rd">EventSourcing</span> is<br/>
-                    not <span class="text-red">hard</span>, but<br/>
-                    <span class="text-red">learning</span> it is.<br/>
+                    <span class="text-red">Event Sourcing</span><br/> is a way to create software models using events.
                 </blockquote>
             </section>
 
-            <section data-background-color="#3d4852">
-                <blockquote>
-                    EventSourcing is a technique where decisions are made based on past events, resulting in newly recorded events that
-                    are stored for later decisions and broadcast to interested parties so they can <span class="text-red">bla bla bla...</span>
-                </blockquote>
-            </section>
-
-            <section data-background-image="https://media.giphy.com/media/CiYImHHBivpAs/giphy.gif"></section>
-
-            <section data-background-image="images/how-its-made.jpg"></section>
-
-            <section data-background-color="#3d4852">
-                <blockquote>
-                    EventSourcing is a way to create software models using events.
-                </blockquote>
-            </section>
-
-            <section data-background-color="#3d4852">
-                <blockquote class="smaller">
-                    <span class="text-white">Event</span>
-                    <span class="text-white">Aggregate Root</span>
-                    <span class="text-white">Aggregate Root Repository</span>
-                    <span class="text-white">Message</span>
-                    <span class="text-white">Message Repository</span>
-                    <span class="text-white">Message Dispatcher</span>
-                    <span class="text-white">Consumer(s)</span>
-                    <span class="text-white">Projection(s)</span>
-                    <span class="text-white">Read Model(s)</span>
-                    <span class="text-white">Process Manager(s)</span>
-                </blockquote>
-                <aside class="notes">
-                    <p>Talk is cheap, let's look at some code.</p>
-                </aside>
-            </section>
-
             <section data-title-hidden data-background-color="#fff">
-                    <pre class="language-php"><code data-filename="transaction-1.php" data-trim>
-                        $credit = 100;
+                    <pre class="language-javascript"><code data-trim>
+                        $balance = 15;
 
-                        $purchase = 80;
+                        $spendingAmount = 12;
 
-                        if ($credit >= $purchase) {
-                            $credit -= $purchase;
-                            echo "Purchase of $purchase is OK!";
-                        } else {
-                            echo "Purchase of $purchase has failed.";
+                        if ($spendingAmount >= $balance) {
+                            $balance -= $spendingAmount;
+
+                            return true;
                         }
                     </code></pre>
             </section>
             <section data-title-hidden data-background-color="#fff">
-                    <pre class="language-php"><code data-filename="transaction-2.php" data-trim>
-                        $credit = 60;
+                    <pre data-line="1" class="language-javascript"><code data-trim>
+                        $balance = 15; // context
 
-                        $purchase = 80;
+                        $spendingAmount = 12;
 
-                        if ($credit >= $purchase) {
-                            $credit -= $purchase;
-                            echo "Purchase of $purchase is OK!";
-                        } else {
-                            echo "Purchase of $purchase has failed.";
+                        if ($spendingAmount >= $balance) {
+                            $balance -= $spendingAmount;
+
+                            return true;
                         }
                     </code></pre>
             </section>
             <section data-title-hidden data-background-color="#fff">
-                    <pre class="language-php"><code data-include="fetch_credit.php" data-filename="transaction-3.php" data-trim>
-                        $credit = fetch_credit();
-                        echo "Credit is $credit\n";
-                        $purchase = 80;
+                    <pre data-line="3" class="language-javascript"><code data-trim>
+                        $balance = 15; // context
 
-                        if ($credit >= $purchase) {
-                            $credit -= $purchase;
-                            echo "Purchase of $purchase is OK!";
-                        } else {
-                            echo "Purchase of $purchase has failed.";
+                        $spendingAmount = 12; // input
+
+                        if ($spendingAmount >= $balance) {
+                            $balance -= $spendingAmount;
+
+                            return true;
                         }
                     </code></pre>
             </section>
             <section data-title-hidden data-background-color="#fff">
-                    <pre class="language-php"><code data-include="fetch_credit.php" data-filename="transaction-4.php" data-trim>
-                        $credit = fetch_credit();
-                        echo "Credit is $credit\n";
-                        $purchase = amount_from_request();
+                    <pre data-line="5" class="language-javascript"><code data-trim>
+                        $balance = 15; // context
 
-                        if ($credit >= $purchase) {
-                            $credit -= $purchase;
-                            echo "Purchase of $purchase is OK!";
-                        } else {
-                            echo "Purchase of $purchase has failed.";
+                        $spendingAmount = 12; // input
+
+                        if ($spendingAmount >= $balance) { // decision
+                            $balance -= $spendingAmount;
+
+                            return true;
+                        }
+                    </code></pre>
+            </section>
+
+            <section data-title-hidden data-background-color="#fff">
+                    <pre data-line="6-8" class="language-javascript"><code data-trim>
+                        $balance = 15; // context
+
+                        $spendingAmount = 12; // input
+
+                        if ($spendingAmount >= $balance) { // decision
+                            $balance -= $spendingAmount; // outcome
+
+                            return true; // outcome
                         }
                     </code></pre>
             </section>
             <section data-title-hidden data-background-color="#fff">
-                    <pre data-line="1" class="language-php"><code data-include="fetch_credit.php" data-filename="transaction-3.php" data-trim>
-                        $credit = fetch_credit(); // context
-                        echo "Credit is $credit\n";
-                        $purchase = amount_from_request();
+                    <pre class="language-javascript"><code data-trim>
+                        $balance = 15;
 
-                        if ($credit >= $purchase) {
-                            $credit -= $purchase;
-                            echo "Purchase of $purchase is OK!";
-                        } else {
-                            echo "Purchase of $purchase has failed.";
+                        $spendingAmount = 12;
+
+                        if ($spendingAmount >= $balance) {
+                            $balance -= $spendingAmount;
+
+                            return true;
                         }
                     </code></pre>
             </section>
-            <section data-title-hidden data-background-color="#fff">
-                    <pre data-line="3" class="language-php"><code data-include="fetch_credit.php" data-filename="transaction-3.php" data-trim>
-                        $credit = fetch_credit();
-                        echo "Credit is $credit\n";
-                        $purchase = amount_from_request(); // input
 
-                        if ($credit >= $purchase) {
-                            $credit -= $purchase;
-                            echo "Purchase of $purchase is OK!";
-                        } else {
-                            echo "Purchase of $purchase has failed.";
+            <section data-title-hidden data-background-color="#fff">
+                    <pre data-line="1-2" class="language-javascript"><code data-trim>
+                        $transactions = [10, -5, 20, -10];                       // context
+                        $balance = foreach ($transactions as $t) $balance += $t; // context
+                        $spendingAmount = 12;
+
+                        if ($spendingAmount >= $balance) {
+                            $balance -= $spendingAmount;
+
+                            return true;
                         }
                     </code></pre>
             </section>
-            <section data-title-hidden data-background-color="#fff">
-                    <pre data-line="5,8,10" class="language-php"><code data-include="fetch_credit.php" data-filename="transaction-3.php" data-trim>
-                        $credit = fetch_credit();
-                        echo "Credit is $credit\n";
-                        $purchase = amount_from_request();
 
-                        if ($credit >= $purchase) { // decision
-                            $credit -= $purchase;
-                            echo "Purchase of $purchase is OK!";
-                        } else {
-                            echo "Purchase of $purchase has failed.";
+            <section data-title-hidden data-background-color="#fff">
+                    <pre data-line="6-8" class="language-javascript"><code data-trim>
+                        $transactions = [10, -5, 20, -10];
+                        $balance = foreach ($transactions as $t) $balance += $t;
+                        $spendingAmount = 12;
+
+                        if ($spendingAmount >= $balance) {
+                            $balance -= $spendingAmount;           // outcome
+                            $transactions[] = spendingAmount * -1; // outcome
+                            return true;                           // outcome
                         }
                     </code></pre>
             </section>
-            <section data-title-hidden data-background-color="#fff">
-                    <pre data-line="6-7,9" class="language-php"><code data-include="fetch_credit.php" data-filename="transaction-3.php" data-trim>
-                        $credit = fetch_credit();
-                        echo "Credit is $credit\n";
-                        $purchase = amount_from_request();
 
-                        if ($credit >= $purchase) {
-                            $credit -= $purchase; // outcome
-                            echo "Purchase of $purchase is OK!";
-                        } else {
-                            echo "Purchase of $purchase has failed.";
-                        }
-                    </code></pre>
+            <section>
+                <img src="images/0-state.svg" />
             </section>
             <section>
-                <h3 class="text-left">
-                    In a given <span class="text-red">context</span>,<br/>
-                    when handling <span class="text-red">input</span><br/>
-                    a <span class="text-red">decision</span> is made<br/>
-                    which has an <span class="text-red">outcome</span>.
+                <img src="images/1-initial-state.svg" />
+            </section>
+            <section>
+                <img src="images/2-initial-state-action.svg" />
+            </section>
+            <section>
+                <img src="images/3-initial-state-new-state.svg" />
+            </section>
+            <section>
+                <img src="images/4-new-state.svg" />
+            </section>
+            <section>
+                <img src="images/5-old-state-lost.svg" />
+            </section>
+            <section>
+                <img src="images/7-new-state-only.svg" />
+            </section>
+            <!--            <section>-->
+            <!--                <h2>Event<span class="text-red">Sourcing</span></h2>-->
+            <!--            </section>-->
+            <section>
+                <h3>
+                    <ol>
+                        <li>Load the <span class="text-red">model</span> from the <span class="text-red">database</span>.</li>
+                        <li>Interact with the model.</li>
+                        <li>Overwrite old <span class="text-red">model</span>.</li>
+                    </ol>
                 </h3>
             </section>
+            <!--            <section>-->
+            <!--                <h3>-->
+            <!--                    <ol>-->
+            <!--                        <li>Rebuild model from stored events.</li>-->
+            <!--                        <li>Interact with the model.</li>-->
+            <!--                        <li>Store changes in the model.</li>-->
+            <!--                    </ol>-->
+            <!--                </h3>-->
+            <!--                <h4 style="margin-left: -2em;">(Event Sourcing)</h4>-->
+            <!--            </section>-->
+            <section>
+                <h3>
+                    <ol>
+                        <li>Rebuild the model from <span class="text-red">old&nbsp;events</span>.</li>
+                        <li>Interact with the model.</li>
+                        <li>Record <span class="text-red">new events</span>.</li>
+                    </ol>
+                </h3>
+            </section>
+
+            <section>
+                <img src="images/8-state.svg" />
+            </section>
+            <section>
+                <img src="images/9-perform-an-action.svg" />
+            </section>
+            <section>
+                <img src="images/10-results-in-event.svg" />
+            </section>
+            <section>
+                <img src="images/11-event-is-stored.svg" />
+            </section>
+            <section>
+                <img src="images/12-and-repeat.svg" />
+            </section>
+            <section>
+                <img src="images/13-event-2.svg" />
+            </section>
+            <section>
+                <img src="images/14-event-3.svg" />
+            </section>
+
+<!--            <section data-background-color="#3d4852">-->
+<!--                <blockquote class="smaller">-->
+<!--                    <span class="text-white">Event</span>-->
+<!--                    <span class="text-white">Aggregate Root</span>-->
+<!--                    <span class="text-white">Aggregate Root Repository</span>-->
+<!--                    <span class="text-white">Message</span>-->
+<!--                    <span class="text-white">Message Repository</span>-->
+<!--                    <span class="text-white">Message Dispatcher</span>-->
+<!--                    <span class="text-white">Consumer(s)</span>-->
+<!--                    <span class="text-white">Projection(s)</span>-->
+<!--                    <span class="text-white">Read Model(s)</span>-->
+<!--                    <span class="text-white">Process Manager(s)</span>-->
+<!--                </blockquote>-->
+<!--                <aside class="notes">-->
+<!--                    <p>Talk is cheap, let's look at some code.</p>-->
+<!--                </aside>-->
+<!--            </section>-->
+
             <!--<section data-title-hidden data-background-color="#fff">-->
             <!--<pre data-line="1" class="language-php"><code data-include="fetch_credit.php" data-filename="transaction-3.php" data-trim>-->
             <!--$credit = fetch_credit();-->
@@ -250,147 +319,85 @@
             <!--<h3>Entity Models</h3>-->
             <!--<h4>(Eloquent / Doctrine)</h4>-->
             <!--</section>-->
-            <section data-title-hidden data-background-color="#fff">
-                    <pre class="language-php"><code data-filename="entity_models.php" data-trim>
-                        class PersonalBudget {
-                            public function __construct(private int $credit) {}
-
-                            public function spend(int $amount): bool {
-                                if ($amount > $this->credit) return false;
-
-                                $this->credit -= $amount;
-
-                                return true;
-                            }
-                        }
-                    </code></pre>
-            </section>
-            <section data-title-hidden data-background-color="#fff">
-                    <pre class="language-php"><code data-include="bank_entity_repository.php" data-filename="entity_usage.php" data-trim>
-                        $personalBudget = $repository->retrieve($id);
-
-                        if ($personalBudget->spend(amount_to_spend())) {
-                            echo "Spending succeeded";
-                        } else {
-                            echo "Spending failed";
-                        }
-
-                        $repository->persist($personalBudget);
-                    </code></pre>
-            </section>
-            <section data-title-hidden data-background-color="#fff">
-                    <pre data-line="1" class="language-php"><code data-include="bank_entity_repository.php" data-filename="entity_usage.php" data-trim>
-                        $personalBudget = $repository->retrieve($id); // context
-
-                        if ($personalBudget->spend(amount_to_spend())) {
-                            echo "Spending succeeded";
-                        } else {
-                            echo "Spending failed";
-                        }
-
-                        $repository->persist($personalBudget);
-                    </code></pre>
-            </section>
-            <section data-title-hidden data-background-color="#fff">
-                    <pre data-line="3,5,7" class="language-php"><code data-include="bank_entity_repository.php" data-filename="entity_usage.php" data-trim>
-                        $personalBudget = $repository->retrieve($id);
-
-                        if ($personalBudget->spend(amount_to_spend())) { // decision
-                            echo "Spending succeeded";
-                        } else {
-                            echo "Spending failed";
-                        }
-
-                        $repository->persist($personalBudget);
-                    </code></pre>
-            </section>
-            <section data-title-hidden data-background-color="#fff">
-                    <pre data-line="4,6,9" class="language-php"><code data-include="bank_entity_repository.php" data-filename="entity_usage.php" data-trim>
-                        $personalBudget = $repository->retrieve($id);
-
-                        if ($personalBudget->spend(amount_to_spend())) {
-                            echo "Spending succeeded";
-                        } else {
-                            echo "Spending failed";
-                        }
-
-                        $repository->persist($personalBudget); // outcome
-                    </code></pre>
-            </section>
-            <section>
-                <img src="images/1-initial-state.svg" />
-            </section>
-            <section>
-                <img src="images/2-initial-state-action.svg" />
-            </section>
-            <section>
-                <img src="images/3-initial-state-new-state.svg" />
-            </section>
-            <section>
-                <img src="images/4-new-state.svg" />
-            </section>
-            <section>
-                <img src="images/5-old-state-lost.svg" />
-            </section>
-            <section>
-                <img src="images/7-new-state-only.svg" />
-            </section>
-<!--            <section>-->
-<!--                <h2>Event<span class="text-red">Sourcing</span></h2>-->
-<!--            </section>-->
-            <section>
-                <h3>
-                    <ol>
-                        <li>Load the <span class="text-red">model</span> from the <span class="text-red">database</span>.</li>
-                        <li>Interact with the model.</li>
-                        <li>Persist updated <span class="text-red">model</span>.</li>
-                    </ol>
-                </h3>
-                <h4 style="margin-left: -2em;">(What we're used to)</h4>
-            </section>
-            <section>
-                <h3>
-                    <ol>
-                        <li>Rebuild model from stored events.</li>
-                        <li>Interact with the model.</li>
-                        <li>Store changes in the model.</li>
-                    </ol>
-                </h3>
-                <h4 style="margin-left: -2em;">(Event Sourcing)</h4>
-            </section>
-            <section>
-                <h3>
-                    <ol>
-                        <li><span class="text-red">Reconstitute</span> the <span class="text-red">Aggregate</span> from old events.</li>
-                        <li>Interact with the model.</li>
-                        <li>Persist/dispatch new <span class="text-red">events</span>.</li>
-                    </ol>
-                </h3>
-                <h4 style="margin-left: -2em;">(Event Sourcing Speak)</h4>
-            </section>
-            <section>
-                <img src="images/8-state.svg" />
-            </section>
-            <section>
-                <img src="images/9-perform-an-action.svg" />
-            </section>
-            <section>
-                <img src="images/10-results-in-event.svg" />
-            </section>
-            <section>
-                <img src="images/11-event-is-stored.svg" />
-            </section>
-            <section>
-                <img src="images/12-and-repeat.svg" />
-            </section>
-            <section>
-                <img src="images/13-event-2.svg" />
-            </section>
-            <section>
-                <img src="images/14-event-3.svg" />
-            </section>
-
 <!--            <section data-title-hidden data-background-color="#fff">-->
+<!--                    <pre class="language-php"><code data-filename="entity_models.php" data-trim>-->
+<!--                        class PersonalBudget {-->
+<!--                            public function __construct(private int $credit) {}-->
+
+<!--                            public function spend(int $amount): bool {-->
+<!--                                if ($amount > $this->credit) {-->
+<!--                                    return false;-->
+<!--                                }-->
+
+<!--                                $this->credit -= $amount;-->
+
+<!--                                return true;-->
+<!--                            }-->
+<!--                        }-->
+<!--                    </code></pre>-->
+<!--            </section>-->
+<!--            <section data-title-hidden data-background-color="#fff">-->
+<!--                    <pre class="language-php"><code data-include="bank_entity_repository.php" data-filename="entity_usage.php" data-trim>-->
+<!--                        $personalBudget = $repository->retrieve($id);-->
+
+<!--                        if ($personalBudget->spend(amount_to_spend())) {-->
+<!--                            echo "Spending succeeded";-->
+<!--                        } else {-->
+<!--                            echo "Spending failed";-->
+<!--                        }-->
+
+<!--                        $repository->persist($personalBudget);-->
+<!--                    </code></pre>-->
+<!--            </section>-->
+<!--            <section data-title-hidden data-background-color="#fff">-->
+<!--                    <pre data-line="1" class="language-php"><code data-include="bank_entity_repository.php" data-filename="entity_usage.php" data-trim>-->
+<!--                        $personalBudget = $repository->retrieve($id); // context-->
+
+<!--                        if ($personalBudget->spend(amount_to_spend())) {-->
+<!--                            echo "Spending succeeded";-->
+<!--                        } else {-->
+<!--                            echo "Spending failed";-->
+<!--                        }-->
+
+<!--                        $repository->persist($personalBudget);-->
+<!--                    </code></pre>-->
+<!--            </section>-->
+<!--            <section data-title-hidden data-background-color="#fff">-->
+<!--                    <pre data-line="3,5,7" class="language-php"><code data-include="bank_entity_repository.php" data-filename="entity_usage.php" data-trim>-->
+<!--                        $personalBudget = $repository->retrieve($id);-->
+
+<!--                        if ($personalBudget->spend(amount_to_spend())) { // decision-->
+<!--                            echo "Spending succeeded";-->
+<!--                        } else {-->
+<!--                            echo "Spending failed";-->
+<!--                        }-->
+
+<!--                        $repository->persist($personalBudget);-->
+<!--                    </code></pre>-->
+<!--            </section>-->
+<!--            <section data-title-hidden data-background-color="#fff">-->
+<!--                    <pre data-line="4,6,9" class="language-php"><code data-include="bank_entity_repository.php" data-filename="entity_usage.php" data-trim>-->
+<!--                        $personalBudget = $repository->retrieve($id);-->
+
+<!--                        if ($personalBudget->spend(amount_to_spend())) {-->
+<!--                            echo "Spending succeeded";-->
+<!--                        } else {-->
+<!--                            echo "Spending failed";-->
+<!--                        }-->
+
+<!--                        $repository->persist($personalBudget); // outcome-->
+<!--                    </code></pre>-->
+<!--            </section>-->
+
+            <section data-background-color="#3d4852">
+                <img src="images/lingo.png" alt="">
+            </section>
+
+
+
+
+
+            <!--            <section data-title-hidden data-background-color="#fff">-->
 <!--                    <pre class="language-php"><code data-trim>-->
 <!--                        $personalBudget = $repository->retrieve($id);-->
 
@@ -404,35 +411,35 @@
 <!--                    </code></pre>-->
 <!--            </section>-->
 
-            <section data-background-color="#3d4852">
-                <blockquote class="smaller">
-                    <span class="text-white">Event</span>
-                    <span class="text-white">Aggregate (Root)</span>
-                    <span class="text-white">Aggregate Root Repository</span>
-                    <span class="text-white">Message</span>
-                    <span class="text-white">Message Repository</span>
-                    <span class="text-white">Message Dispatcher</span>
-                    <span class="text-white">Consumer(s)</span>
-                    <span class="text-white">Projection(s)</span>
-                    <span class="text-white">Read Model(s)</span>
-                    <span class="text-white">Process Manager(s)</span>
-                </blockquote>
-            </section>
+<!--            <section data-background-color="#3d4852">-->
+<!--                <blockquote class="smaller">-->
+<!--                    <span class="text-white">Event</span>-->
+<!--                    <span class="text-white">Aggregate (Root)</span>-->
+<!--                    <span class="text-white">Aggregate Root Repository</span>-->
+<!--                    <span class="text-white">Message</span>-->
+<!--                    <span class="text-white">Message Repository</span>-->
+<!--                    <span class="text-white">Message Dispatcher</span>-->
+<!--                    <span class="text-white">Consumer(s)</span>-->
+<!--                    <span class="text-white">Projection(s)</span>-->
+<!--                    <span class="text-white">Read Model(s)</span>-->
+<!--                    <span class="text-white">Process Manager(s)</span>-->
+<!--                </blockquote>-->
+<!--            </section>-->
 
-            <section data-background-color="#3d4852">
-                <blockquote class="smaller">
-                    <span class="text-red">Event</span>
-                    <span class="text-red">Aggregate (Root)</span>
-                    <span class="text-red">Aggregate Root Repository</span>
-                    <span class="text-white">Message</span>
-                    <span class="text-white">Message Repository</span>
-                    <span class="text-white">Message Dispatcher</span>
-                    <span class="text-white">Consumer(s)</span>
-                    <span class="text-white">Projection(s)</span>
-                    <span class="text-white">Read Model(s)</span>
-                    <span class="text-white">Process Manager(s)</span>
-                </blockquote>
-            </section>
+<!--            <section data-background-color="#3d4852">-->
+<!--                <blockquote class="smaller">-->
+<!--                    <span class="text-red">Event</span>-->
+<!--                    <span class="text-red">Aggregate (Root)</span>-->
+<!--                    <span class="text-red">Aggregate Root Repository</span>-->
+<!--                    <span class="text-white">Message</span>-->
+<!--                    <span class="text-white">Message Repository</span>-->
+<!--                    <span class="text-white">Message Dispatcher</span>-->
+<!--                    <span class="text-white">Consumer(s)</span>-->
+<!--                    <span class="text-white">Projection(s)</span>-->
+<!--                    <span class="text-white">Read Model(s)</span>-->
+<!--                    <span class="text-white">Process Manager(s)</span>-->
+<!--                </blockquote>-->
+<!--            </section>-->
 
             <section data-background-color="#3d4852">
                 <blockquote>
@@ -442,21 +449,20 @@
                 </blockquote>
             </section>
 
-            <section data-background-color="#3d4852">
-                <blockquote>
-                    <span class="text-red">Event</span><br/>
-                    an immutable value-object<br/><br/>
-                </blockquote>
-            </section>
+<!--            <section data-background-color="#3d4852">-->
+<!--                <blockquote>-->
+<!--                    <span class="text-red">Event</span><br/>-->
+<!--                    an immutable value-object<br/><br/>-->
+<!--                </blockquote>-->
+<!--            </section>-->
 
             <section data-title-hidden data-background-color="#fff">
                     <pre class="language-php"><code data-trim>
                     class PurchaseWasMade
                     {
-                        private $amount;
+                        public function __construct(private int $amount)
+                        {
 
-                        public function __construct(int $amount) {
-                            $this->amount = $amount;
                         }
 
                         public function amount(): int {
@@ -464,76 +470,77 @@
                         }
                     }
                     </code></pre>
+                    <aside class="notes">
+                        <p></p>
+                    </aside>
             </section>
 
             <section data-title-hidden data-background-color="#fff">
                     <pre class="language-php"><code data-trim>
                     class PurchaseWasMade
                     {
-                        // ...
-
-                        public function toPayload(): array {
-                            return ['amount' => $this->amount];
+                        public function toPayload(): array
+                        {
+                            // serialize to scalars
                         }
-
-                        public static function fromPayload(array $payload) {
-                            return new static($payload['amount']);
+                        public static function toPayload(array $payload): PurchaseWasMade
+                        {
+                            // unserialize from scalars
                         }
                     }
                     </code></pre>
-            </section>
+        </section>
 
-            <section data-title-hidden data-background-color="#fff">
-                    <pre class="language-php"><code data-include="purchase_was_made.php" data-filename="serialize_event.php" data-trim>
-                        $event1 = new PurchaseWasMade(150);
+<!--            <section data-title-hidden data-background-color="#fff">-->
+<!--                    <pre class="language-php"><code data-trim>-->
+<!--                    class PurchaseWasMade-->
+<!--                    {-->
+<!--                        // ...-->
 
-                        $payload = $event1->toPayload();
+<!--                        public function toPayload(): array {-->
+<!--                            return ['amount' => $this->amount];-->
+<!--                        }-->
 
-                        $event2 = PurchaseWasMade::fromPayload($payload);
+<!--                        public static function fromPayload(array $payload) {-->
+<!--                            return new static($payload['amount']);-->
+<!--                        }-->
+<!--                    }-->
+<!--                    </code></pre>-->
+<!--            </section>-->
 
-                        var_dump('same', $event1 === $event2);
+<!--            <section data-title-hidden data-background-color="#fff">-->
+<!--                    <pre class="language-php"><code data-include="purchase_was_made.php" data-filename="serialize_event.php" data-trim>-->
+<!--                        $event1 = new PurchaseWasMade(150);-->
 
-                        var_dump('equal', $event1 == $event2);
-                    </code></pre>
-            </section>
+<!--                        $payload = $event1->toPayload();-->
+
+<!--                        $event2 = PurchaseWasMade::fromPayload($payload);-->
+
+<!--                        var_dump('same', $event1 === $event2);-->
+
+<!--                        var_dump('equal', $event1 == $event2);-->
+<!--                    </code></pre>-->
+<!--            </section>-->
 
             <section data-background-color="#3d4852">
                 <blockquote>
                     <span class="text-red">Aggregate Root</span><br/>
-                    an interaction interface to your domain, limited by a consistency boundary
+                    encapsulates behaviour, and ensures internal consistency
                 </blockquote>
-            </section><section data-background-color="#3d4852">
-            <blockquote>
-                <span class="text-red">Aggregate Root</span><br/>
-                you steer a car by turning the steer, not by adjusting the wheels
-            </blockquote>
-        </section>
+            </section>
+            <section data-background-color="#3d4852">
+                <blockquote>
+                    <span class="text-red">Aggregate Root</span><br/>
+                    you steer a car by turning the steer, not by adjusting the wheels
+                </blockquote>
+            </section>
             <section data-title-hidden data-background-color="#fff">
                     <pre class="language-php"><code data-trim>
         class PersonalBudget
         {
             private $budget = 0;
 
-            public function __construct(AggregateRootId $id)
-            {
-                $this->id = $id;
-            }
-
-
-
-
-
-
-        }
-                    </code></pre>
-            </section>
-            <section data-title-hidden data-background-color="#fff">
-                    <pre class="language-php"><code data-trim>
-        class PersonalBudget
-        {
-            // ...
-
-            public function increaseBudget(int $amount)
+            public function depositFunds(int $amount): void
             {
                 // traditional CRUD
                 $this->budget += $amount;
@@ -541,8 +548,6 @@
 
 
 
-
-
         }
                     </code></pre>
             </section>
@@ -552,13 +557,11 @@
         {
             // ...
 
-            public function increaseBudget(int $amount)
+            public function depositFunds(int $amount): void
             {
                 // event sourced
                 $this->recordThat(new BudgetWasIncreased($amount));
             }
-
-
 
 
 
@@ -571,13 +574,11 @@ class PersonalBudget
 {
     // ...
 
-    protected function recordThat(object $event)
+    protected function recordThat(object $event): void
     {
-        $this->apply($event);
         $this->recordedEvents[] = $event;
+        $this->apply($event);
     }
-
-
 
 
 
@@ -618,8 +619,6 @@ class PersonalBudget
 
 
 
-
-
 }
                     </code></pre>
             </section>
@@ -633,15 +632,13 @@ class PersonalBudget
 {
     public function spend(int $amount)
     {
-        if ($this->budget >= $amount) {
-            $this->budget -= $amount;
-
-            return true;
-        } else {
-
-
+        if ($this->budget < $amount) {
             return false;
         }
+
+        $this->budget -= $amount;
+
+        return true;
     }
 }
                     </code></pre>
@@ -652,89 +649,15 @@ class PersonalBudget
 {
     public function spend(int $amount)
     {
-        if ($this->budget >= $amount) {
-            $this->recordThat(new PurchaseWasMade($amount));
-
-            return true;
-        } else {
-
-
+        if ($this->budget < $amount) {
             return false;
         }
+
+        $this->recordThat(new PurchaseWasMade($amount));
+
+        return true;
     }
 }
-                    </code></pre>
-            </section>
-            <section data-title-hidden data-background-color="#fff">
-                    <pre class="language-php"><code data-trim>
-class PersonalBudget
-{
-    public function spend(int $amount)
-    {
-        if ($this->budget >= $amount) {
-            $this->recordThat(new PurchaseWasMade($amount));
-
-            return true;
-        } else {
-            $this->recordThat(new BudgetWasInsufficient($amount));
-
-            return false;
-        }
-    }
-}
-                    </code></pre>
-            </section>
-
-<!--            <section data-title-hidden data-background-color="#fff">-->
-<!--                    <pre class="language-php"><code data-trim>-->
-<!--class PersonalBudget-->
-<!--{-->
-<!--    protected function applyPurchaseWasMade(-->
-<!--        PurchaseWasMade $event-->
-<!--    ) {-->
-<!--        $this->budget -= $event->amount();-->
-<!--    }-->
-
-
-
-
-
-<!--    // ...-->
-
-<!--}-->
-<!--                    </code></pre>-->
-<!--            </section>-->
-
-            <section data-title-hidden data-background-color="#fff">
-                    <pre class="language-php"><code data-include="spend_100_includes.php" data-filename="spending_within_budget.php">
-                $personalBudget->increaseBudget(50);
-                $personalBudget->increaseBudget(100);
-                $personalBudget->spend(75);
-
-                // Can I spend 10 now?
-                var_dump($personalBudget->spend(10));
-                    </code></pre>
-            </section>
-
-            <section data-title-hidden data-background-color="#fff">
-                    <pre class="language-php"><code data-include="spend_100_includes.php" data-filename="spending_over_budget.php">
-                $personalBudget->increaseBudget(50);
-                $personalBudget->increaseBudget(100);
-                $personalBudget->spend(75);
-
-                // Can I spend 100 now?
-                var_dump($personalBudget->spend(100));
-                    </code></pre>
-            </section>
-
-            <section data-title-hidden data-background-color="#fff">
-                    <pre class="language-php"><code>
-                new BudgetWasIncreased(50);
-                new BudgetWasIncreased(100);
-                new PurchaseWasMade(75);
-
-                // Can I spend 100 now?
-                new BudgetWasInsufficient(100);
                     </code></pre>
             </section>
 
@@ -742,44 +665,39 @@ class PersonalBudget
                     <pre class="language-php"><code data-trim>
 class PersonalBudget
 {
-    protected function recordThat(object $event)
-    {
-        $this->apply($event);
-        $this->recordedEvents[] = $event;
-    }
+    // ...
 
+    protected function applyPurchaseWasMade(
+        BudgetWasIncreased $event
+    ) {
+        $this->budget -= $event->amount();
+    }
 
 
 
 }
                     </code></pre>
             </section>
-            <section data-title-hidden data-background-color="#fff">
-                    <pre data-line="5-11" class="language-php"><code data-trim>
-class PersonalBudget
-{
-    protected function recordThat(object $event) { ... }
 
-    public function releaseEvents(): array
-    {
-        $releasedEvents = $this->recordedEvents;
-        $this->recordedEvents = [];
-
-        return $releasedEvents;
-    }
-}
-                    </code></pre>
+            <section>
+                <h3>
+                    <ol>
+                        <li>Guard business rules</li>
+                        <li>Record event</li>
+                        <li>Apply (internal update)</li>
+                    </ol>
+                </h3>
             </section>
 
             <section data-background-color="#3d4852">
                 <blockquote>
                     <span class="text-red">Aggregate Root Repository</span><br/>
-                    is responsible for storing recorded events and reconstituting aggregates
+                    Storing and retrieving event-sourced models.
                 </blockquote>
             </section>
 
             <section data-title-hidden data-background-color="#fff">
-                    <pre class="language-php"><code data-trim>
+                    <pre data-line="3" class="language-php"><code data-trim>
 interface AggregateRootRepository
 {
     public function persist(object $aggregateRoot);
@@ -790,50 +708,50 @@ interface AggregateRootRepository
             </section>
 
             <section data-title-hidden data-background-color="#fff">
-                    <pre class="language-php"><code data-trim>
-                        class AggregateRootRepository
-                        {
-                            public function persist(AggregateRoot $aggregate)
-                            {
-                                $events = $aggregate->releaseEvents();
-                                $aggregateRootId = $aggregate->aggregateRootId();
-
-
-
-
-
-
-
-
-                            }
-                        }
-                    </code></pre>
-            </section>
-
-            <section data-title-hidden data-background-color="#fff">
-                    <pre class="language-php"><code data-trim>
-                        class AggregateRootRepository
-                        {
-                            public function persist(AggregateRoot $aggregate)
-                            {
-                                $events = $aggregate->releaseEvents();
-                                $aggregateRootId = $aggregate->aggregateRootId();
-
-                                $headers = [Header::AGGREGATE_ROOT_ID => $aggregateRootId];
-                                $messages = array_map(function (object $event) use ($headers) {
-                                    return new Message($event, $headers);
-                                }, $events);
-
-                                $this->messages->persist(...$messages);
-                                $this->dispatcher->dispatch(...$messages);
-                            }
-                        }
-                    </code></pre>
-            </section>
-
-            <section data-title-hidden data-background-color="#fff">
                     <pre data-line="5" class="language-php"><code data-trim>
-                        class AggregateRootRepository
+                        class PersonalBudgetRepository implements AggregateRootRepository
+                        {
+                            public function persist(AggregateRoot $aggregate)
+                            {
+                                $events = $aggregate->releaseEvents();
+                                $aggregateRootId = $aggregate->aggregateRootId();
+
+
+
+
+
+
+
+
+                            }
+                        }
+                    </code></pre>
+            </section>
+
+            <section data-title-hidden data-background-color="#fff">
+                    <pre data-line="8-11" data- class="language-php"><code data-trim>
+                        class PersonalBudgetRepository implements AggregateRootRepository
+                        {
+                            public function persist(AggregateRoot $aggregate)
+                            {
+                                $events = $aggregate->releaseEvents();
+                                $aggregateRootId = $aggregate->aggregateRootId();
+
+                                $headers = [Header::AGGREGATE_ROOT_ID => $aggregateRootId];
+                                $messages = array_map(function (object $event) use ($headers) {
+                                    return new Message($event, $headers);
+                                }, $events);
+
+
+
+                            }
+                        }
+                    </code></pre>
+            </section>
+
+            <section data-title-hidden data-background-color="#fff">
+                    <pre data-line="13" class="language-php"><code data-trim>
+                        class PersonalBudgetRepository implements AggregateRootRepository
                         {
                             public function persist(AggregateRoot $aggregate)
                             {
@@ -853,89 +771,68 @@ interface AggregateRootRepository
             </section>
 
             <section data-title-hidden data-background-color="#fff">
-                    <pre data-line="8-11" class="language-php"><code data-trim>
-                        class AggregateRootRepository
+                    <pre class="language-php"><code data-trim>
+                        class PersonalBudgetRepository implements AggregateRootRepository
                         {
                             public function persist(AggregateRoot $aggregate)
                             {
-                                $events = $aggregate->releaseEvents();
-                                $aggregateRootId = $aggregate->aggregateRootId();
+                                // Get the events from the Aggregate Root
+                                // ...
 
-                                $headers = [Header::AGGREGATE_ROOT_ID => $aggregateRootId];
-                                $messages = array_map(function (object $event) use ($headers) {
-                                    return new Message($event, $headers);
-                                }, $events);
+                                // Turn the events into messages
+                                // ...
+                                // ...
+                                // ...
 
-                                $this->messages->persist(...$messages);
-                                $this->dispatcher->dispatch(...$messages);
+                                // Persist the events in storage
+                                // Dispatch the events to consumers
                             }
                         }
                     </code></pre>
             </section>
 
-            <section data-title-hidden data-background-color="#fff">
-                    <pre data-line="13-14" class="language-php"><code data-trim>
-                        class AggregateRootRepository
-                        {
-                            public function persist(AggregateRoot $aggregate)
-                            {
-                                $events = $aggregate->releaseEvents();
-                                $aggregateRootId = $aggregate->aggregateRootId();
+<!--            <section>-->
+<!--                <img src="images/aggregate-to-messages.png" alt="">-->
+<!--            </section>-->
+<!--            <section>-->
+<!--                <img src="images/aggregate-to-messages-1.png" alt="">-->
+<!--            </section>-->
+<!--            <section>-->
+<!--                <img src="images/aggregate-to-messages-2.png" alt="">-->
+<!--            </section>-->
+<!--            <section>-->
+<!--                <img src="images/aggregate-to-messages-3.png" alt="">-->
+<!--            </section>-->
 
-                                $headers = [Header::AGGREGATE_ROOT_ID => $aggregateRootId];
-                                $messages = array_map(function (object $event) use ($headers) {
-                                    return new Message($event, $headers);
-                                }, $events);
+<!--            <section data-background-color="#3d4852">-->
+<!--                <blockquote class="smaller">-->
+<!--                    <span class="text-red">Event</span>-->
+<!--                    <span class="text-red">Aggregate (Root)</span>-->
+<!--                    <span class="text-red">Aggregate Root Repository</span>-->
+<!--                    <span class="text-white">Message</span>-->
+<!--                    <span class="text-white">Message Repository</span>-->
+<!--                    <span class="text-white">Message Dispatcher</span>-->
+<!--                    <span class="text-white">Consumer(s)</span>-->
+<!--                    <span class="text-white">Projection(s)</span>-->
+<!--                    <span class="text-white">Read Model(s)</span>-->
+<!--                    <span class="text-white">Process Manager(s)</span>-->
+<!--                </blockquote>-->
+<!--            </section>-->
 
-                                $this->messages->persist(...$messages);
-                                $this->dispatcher->dispatch(...$messages);
-                            }
-                        }
-                    </code></pre>
-            </section>
-
-            <section data-background-color="#3d4852">
-                <blockquote class="smaller">
-                    <span class="text-red">Event</span>
-                    <span class="text-red">Aggregate (Root)</span>
-                    <span class="text-red">Aggregate Root Repository</span>
-                    <span class="text-white">Message</span>
-                    <span class="text-white">Message Repository</span>
-                    <span class="text-white">Message Dispatcher</span>
-                    <span class="text-white">Consumer(s)</span>
-                    <span class="text-white">Projection(s)</span>
-                    <span class="text-white">Read Model(s)</span>
-                    <span class="text-white">Process Manager(s)</span>
-                </blockquote>
-            </section>
-
-            <section data-background-color="#3d4852">
-                <blockquote class="smaller">
-                    <span class="text-white">Event</span>
-                    <span class="text-white">Aggregate (Root)</span>
-                    <span class="text-white">Aggregate Root Repository</span>
-                    <span class="text-red">Message</span>
-                    <span class="text-red">Message Repository</span>
-                    <span class="text-red">Message Dispatcher</span>
-                    <span class="text-white">Consumer(s)</span>
-                    <span class="text-white">Projection(s)</span>
-                    <span class="text-white">Read Model(s)</span>
-                    <span class="text-white">Process Manager(s)</span>
-                </blockquote>
-            </section>
-
-            <section>
-                <img src="images/aggregate-to-messages.png" alt="">
-            </section>
-            <section>
-                <img src="images/aggregate-to-messages-1.png" alt="">
-            </section>
-            <section>
-                <img src="images/aggregate-to-messages-2.png" alt="">
-            </section>
-            <section>
-                <img src="images/aggregate-to-messages-3.png" alt="">
-            </section>
+<!--            <section data-background-color="#3d4852">-->
+<!--                <blockquote class="smaller">-->
+<!--                    <span class="text-white">Event</span>-->
+<!--                    <span class="text-white">Aggregate (Root)</span>-->
+<!--                    <span class="text-white">Aggregate Root Repository</span>-->
+<!--                    <span class="text-red">Message</span>-->
+<!--                    <span class="text-red">Message Repository</span>-->
+<!--                    <span class="text-red">Message Dispatcher</span>-->
+<!--                    <span class="text-white">Consumer(s)</span>-->
+<!--                    <span class="text-white">Projection(s)</span>-->
+<!--                    <span class="text-white">Read Model(s)</span>-->
+<!--                    <span class="text-white">Process Manager(s)</span>-->
+<!--                </blockquote>-->
+<!--            </section>-->
             <!--<section>-->
             <!--<img src="images/aggregate-to-messages-4.png" alt="">-->
             <!--</section>-->
@@ -962,35 +859,7 @@ class Message
             </section>
 
             <section data-title-hidden data-background-color="#fff">
-                    <pre class="language-jsonp"><code data-trim>
-                    {
-                        "headers" {
-                            "aggregate_root_id": "4d975448-d12b-4a2e-bea4-13efd557bd6e",
-                            "event_type": "some_company.namespace.purchase_was_made",
-                            "caused_by": "3cf01840-3d50-4658-b953-b71f66ab4701"
-                        },
-                        "payload": {
-                            "amount": 80
-                        }
-                    }
-                    </code></pre>
-            </section>
-            <section data-title-hidden data-background-color="#fff">
-                    <pre data-line="3-4" class="language-jsonp"><code data-trim>
-                    {
-                        "headers" {
-                            "aggregate_root_id": "4d975448-d12b-4a2e-bea4-13efd557bd6e",
-                            "event_type": "some_company.namespace.purchase_was_made",
-                            "caused_by": "3cf01840-3d50-4658-b953-b71f66ab4701"
-                        },
-                        "payload": {
-                            "amount": 80
-                        }
-                    }
-                    </code></pre>
-            </section>
-            <section data-title-hidden data-background-color="#fff">
-                    <pre data-line="7-9" class="language-jsonp"><code data-trim>
+                    <pre class="language-json"><code data-trim>
                     {
                         "headers" {
                             "aggregate_root_id": "4d975448-d12b-4a2e-bea4-13efd557bd6e",
@@ -1005,153 +874,205 @@ class Message
             </section>
 
             <section data-title-hidden data-background-color="#fff">
-                <h4>Store it somewhere</h4>
-                    <pre class="language-php"><code data-trim>
-interface MessageRepository
-{
-    public function persist(Message ...$messages);
-
-    public function retrieveAll(AggregateRootId $id): Generator;
-}</code></pre>
-                <h5><br/>Can be MySQL, MongoDB, Redis, What-ever!</h5>
-            </section>
-
-            <section data-title-hidden data-background-color="#fff">
-                <h4>Store it somewhere</h4>
-                    <pre data-line="2-4" class="language-sql"><code data-trim>
+                    <pre class="language-sql"><code data-trim>
 CREATE TABLE processing_payments (
-    id BIGINT UNSIGNED AUTO_INCREMENT NOT NULL PRIMARY KEY,
-    aggregate_root_id VARCHAR(36) NOT NULL,
-    payload JSON NOT NULL,
-    INDEX aggregate_reconstitution (aggregate_root_id, id ASC)
+    `event_id` BINARY(16) NOT NULL,          // UUID
+    `aggregate_root_id` BINARY(16) NOT NULL, // UUID
+    `version` int(20) unsigned NULL,         // INT
+    `payload` varchar(16001) NOT NULL,       // JSON
+    PRIMARY KEY (`event_id`),
+    KEY (`aggregate_root_id`),
+    KEY `reconstitution` (`aggregate_root_id`, `version` ASC)
 );
                     </code></pre>
-                <h5><br/>Am I doing this right, @Willem?</h5>
             </section>
 
             <section data-title-hidden data-background-color="#fff">
-                <h4>Store it somewhere</h4>
-                    <pre data-line="4" class="language-sql"><code data-trim>
+                    <pre class="language-sql"><code data-trim>
+INSERT INTO your_table_name
+    (event_id, aggregate_root_id, version, payload)
+    VALUES (:event_id, :aggregate_root_id, :version, :payload)
+
+
 SELECT payload
-    FROM processing_payments
-
-    WHERE aggregate_root_id = ":aggregate_root_id"
-
-    ORDER BY id ASC
+    FROM your_table_name
+    WHERE aggregate_root_id = :aggregate_root_id
+    ORDER BY version ASC
 
                     </code></pre>
-                <h5><br/>Am I doing this right, @Willem?</h5>
             </section>
 
             <section data-title-hidden data-background-color="#fff">
-                <h4>Transport it somehow</h4>
-                    <pre class="language-php"><code data-trim>
-                        interface MessageDispatcher
-                        {
-                            public function dispatch(Message ...$messages);
-
-
-                        }</code></pre>
-                    <h5><br/>Can be RabbitMQ, Kafka, Sync, What-ever!</h5>
-            </section>
-            <section data-title-hidden data-background-color="#fff">
-                    <pre class="language-php"><code data-trim>
-class SynchronousMessageDispatcher implements MessageDispatcher
+                    <pre data-line="5" class="language-php"><code data-trim>
+interface AggregateRootRepository
 {
-    public function __construct(private Consumer ...$consumers) {}
+    public function persist(object $aggregateRoot);
 
-    public function dispatch(Message ...$messages)
+    public function retrieve(AggregateRootId id): object;
+}
+                    </code></pre>
+            </section>
+
+            <section data-background-color="#3d4852">
+                <blockquote>
+                    <span class="text-red">Reconstitution<br/></span>
+                    the act of building something up again.<br/>
+                </blockquote>
+            </section>
+
+            <section data-title-hidden data-background-color="#fff">
+                    <pre class="language-php"><code data-trim>
+class PersonalBudgetRepository implements AggregateRootRepository
+{
+    public function retrieve(AggregateRootId $id): PersonalBudget
     {
-        foreach ($messages as $message) {
-            foreach ($this->consumers as $consumer) {
-                $consumer->handle($message);
-            }
+        return PersonalBudget::reconstituteFromEvents(
+            $id,
+            $this->retrieveAllEvents($id)
+        );
+    }
+
+
+
+}
+                    </code></pre>
+            </section>
+
+            <section data-title-hidden data-background-color="#fff">
+                    <pre class="language-php"><code data-trim>
+class PersonalBudgetRepository implements AggregateRootRepository
+{
+    private function retrieveAllEvents(AggregateRootId $id): Generator
+    {
+        foreach ($this->messages->retrieveAllMessages($id) as $msg) {
+            yield $msg->event();
         }
+    }
+
+
+
+
+}
+                    </code></pre>
+            </section>
+
+            <section data-title-hidden data-background-color="#fff">
+                    <pre class="language-php"><code data-trim>
+class PersonalBudget
+{
+    public static function reconstituteFromEvents(
+        Identifier $id,
+        Generator $events
+    ): PersonalBudget
+    {
+        $budget = new PersonalBudget($id);
+        foreach ($events as $event) $budget->apply($event);
+
+        return $budget;
     }
 }
                     </code></pre>
             </section>
 
-            <section data-background-color="#fff">
-                <h3>Synchronous</h3>
-                <blockquote>
-                    ✅ No extra infrastructure<br/>
-                    ✅ Good enough (?)<br/>
-                    ❌ No retry mechanisms<br/>
-                    ❌ No horizontal scaling<br/>
-                    ❌ No easy rebuilds<br/>
-                </blockquote>
+            <section>
+                <img src="images/reconstitution.png">
             </section>
 
-            <section data-background-color="#fff">
-                <h3>Asynchronous</h3>
-                <blockquote>
-                    ❌ Extra infrastructure<br/>
-                    ❌ More complex setup<br/>
-                    ✅ Retry mechanisms<br/>
-                    ✅ Horizontal scaling<br/>
-                    ✅ Rebuilds possible<br/>
-                </blockquote>
-            </section>
-
-            <section data-background-color="#3d4852">
-                <blockquote class="smaller">
-                    <span class="text-white">Event</span>
-                    <span class="text-white">Aggregate (Root)</span>
-                    <span class="text-white">Aggregate Root Repository</span>
-                    <span class="text-red">Message</span>
-                    <span class="text-red">Message Repository</span>
-                    <span class="text-red">Message Dispatcher</span>
-                    <span class="text-white">Consumer(s)</span>
-                    <span class="text-white">Projection(s)</span>
-                    <span class="text-white">Read Model(s)</span>
-                    <span class="text-white">Process Manager(s)</span>
-                </blockquote>
-            </section>
-
-            <section data-background-color="#3d4852">
-                <blockquote class="smaller">
-                    <span class="text-white">Event</span>
-                    <span class="text-white">Aggregate (Root)</span>
-                    <span class="text-white">Aggregate Root Repository</span>
-                    <span class="text-white">Message</span>
-                    <span class="text-white">Message Repository</span>
-                    <span class="text-white">Message Dispatcher</span>
-                    <span class="text-red">Consumer(s)</span>
-                    <span class="text-red">Projection(s)</span>
-                    <span class="text-red">Read Model(s)</span>
-                    <span class="text-red">Process Manager(s)</span>
-                </blockquote>
-            </section>
-
-            <section data-background-color="#3d4852">
-                <blockquote>
-                    <span class="text-red">Consumer</span><br/>
-                    something that reacts to events<br/><br/>
-                </blockquote>
+            <section>
+                <img src="images/recording-events.png">
             </section>
 
             <section data-title-hidden data-background-color="#fff">
-                    <pre class="language-php"><code data-trim>
-                        interface Consumer
+                    <pre data-line="14" class="language-php"><code data-trim>
+                        class PersonalBudgetRepository implements AggregateRootRepository
                         {
-                            public function handle(Message $message);
+                            public function persist(AggregateRoot $aggregate)
+                            {
+                                $events = $aggregate->releaseEvents();
+                                $aggregateRootId = $aggregate->aggregateRootId();
+
+                                $headers = [Header::AGGREGATE_ROOT_ID => $aggregateRootId];
+                                $messages = array_map(function (object $event) use ($headers) {
+                                    return new Message($event, $headers);
+                                }, $events);
+
+                                $this->messages->persist(...$messages);
+                                $this->dispatcher->dispatch(...$messages);
+                            }
                         }
                     </code></pre>
             </section>
 
-            <section data-background-color="#3d4852">
-                <blockquote>
-                    <span class="text-red">Projection</span><br/>
-                    something that uses event data to create a read-model (view)
-                </blockquote>
-            </section>
+            <section data-title-hidden data-background-color="#fff">
+                <h4>Dispatch the messages</h4>
+                <pre class="language-php"><code data-trim>
+                    interface MessageDispatcher
+                    {
+                        public function dispatch(Message ...$messages);
 
-            <section data-background-color="#3d4852">
-                <blockquote>
-                    <span class="text-red">Read Model</span><br/>
-                    a view of the event data optimized for reading<br/><br/>
-                </blockquote>
+
+                    }</code></pre>
+                <h5><br/>RabbitMQ / Kafka / InSync / PubSub</h5>
+            </section>
+<!--            <section data-title-hidden data-background-color="#fff">-->
+<!--                    <pre class="language-php"><code data-trim>-->
+<!--class SynchronousMessageDispatcher implements MessageDispatcher-->
+<!--{-->
+<!--    public function __construct(private Consumer ...$consumers) {}-->
+
+<!--    public function dispatch(Message ...$messages)-->
+<!--    {-->
+<!--        foreach ($messages as $message) {-->
+<!--            foreach ($this->consumers as $consumer) {-->
+<!--                $consumer->handle($message);-->
+<!--            }-->
+<!--        }-->
+<!--    }-->
+<!--}-->
+<!--                    </code></pre>-->
+<!--            </section>-->
+
+<!--            <section data-background-color="#3d4852">-->
+<!--                <blockquote class="smaller">-->
+<!--                    <span class="text-white">Event</span>-->
+<!--                    <span class="text-white">Aggregate (Root)</span>-->
+<!--                    <span class="text-white">Aggregate Root Repository</span>-->
+<!--                    <span class="text-red">Message</span>-->
+<!--                    <span class="text-red">Message Repository</span>-->
+<!--                    <span class="text-red">Message Dispatcher</span>-->
+<!--                    <span class="text-white">Consumer(s)</span>-->
+<!--                    <span class="text-white">Projection(s)</span>-->
+<!--                    <span class="text-white">Read Model(s)</span>-->
+<!--                    <span class="text-white">Process Manager(s)</span>-->
+<!--                </blockquote>-->
+<!--            </section>-->
+
+<!--            <section data-background-color="#3d4852">-->
+<!--                <blockquote class="smaller">-->
+<!--                    <span class="text-white">Event</span>-->
+<!--                    <span class="text-white">Aggregate (Root)</span>-->
+<!--                    <span class="text-white">Aggregate Root Repository</span>-->
+<!--                    <span class="text-white">Message</span>-->
+<!--                    <span class="text-white">Message Repository</span>-->
+<!--                    <span class="text-white">Message Dispatcher</span>-->
+<!--                    <span class="text-red">Consumer(s)</span>-->
+<!--                    <span class="text-red">Projection(s)</span>-->
+<!--                    <span class="text-red">Read Model(s)</span>-->
+<!--                    <span class="text-red">Process Manager(s)</span>-->
+<!--                </blockquote>-->
+<!--            </section>-->
+
+            <section data-title-hidden data-background-color="#fff">
+                <h4>Respond to the messages</h4>
+                <pre class="language-php"><code data-trim>
+                    interface MessageConsumer
+                    {
+                        public function handle(Message $message);
+
+
+                    }
+                </code></pre>
+                <h5><br/>Projection / Process Manager</h5>
             </section>
 
             <section>
@@ -1172,7 +1093,7 @@ class SynchronousMessageDispatcher implements MessageDispatcher
 
             <section data-title-hidden data-background-color="#fff">
                     <pre class="language-php"><code data-trim>
-                class MostSpentList implements Consumer
+                class MostSpentList implements MessageConsumer
                 {
                     public function handle(Message $message)
                     {
@@ -1183,37 +1104,6 @@ class SynchronousMessageDispatcher implements MessageDispatcher
                                 $message->aggregateRootId(),
                                 $event->amount()
                             );
-                        }
-                    }
-
-
-
-
-
-
-                }
-                    </code></pre>
-            </section>
-
-            <section data-title-hidden data-background-color="#fff">
-                    <pre class="language-php"><code data-trim>
-                class HighestPurchasePerMonth implements Consumer
-                {
-                    public function handle(Message $message)
-                    {
-                        $event = $message->event();
-
-                        if ($event instanceof PurchaseWasMade) {
-                            $period = substr(
-                                $message->header(Header::TIME_OF_RECORDING), 0, 7
-                            ); // 2019-01
-                            $currentHighest = $this->purchases->highest($period);
-
-                            if ($currentHighest < $event->amount()) {
-                                $this->purchases->updateHighest(
-                                    $period, $event->amount()
-                                );
-                            }
                         }
                     }
                 }
@@ -1229,206 +1119,48 @@ class SynchronousMessageDispatcher implements MessageDispatcher
                     ✅ Views are very simple<br/>
                     ✅ Use any type of DB<br/>
                 </blockquote>
-                <aside class="notes">
-                    <p>
-                        Now the process is complete, we went from recording events to
-                        notifying consumers. In order to complete the circle, we need to
-                        go into one last part, which is reconstitution.
-                    </p>
-                </aside>
-            </section>
-
-            <section data-title-hidden data-background-color="#fff">
-                    <pre class="language-php"><code data-trim>
-                        $personalBudget = new PersonalBudget($id);
-
-                        if ($personalBudget->spend(amount_to_spend())) {
-                            echo "Spending succeeded";
-                        } else {
-                            echo "Spending failed";
-                        }
-
-                        $repository->persist($personalBudget);
-                    </code></pre>
-            </section>
-
-            <section data-title-hidden data-background-color="#fff">
-                    <pre data-line="1" class="language-php"><code data-trim>
-                        $personalBudget = $repository->retrieve($id);
-
-                        if ($personalBudget->spend(amount_to_spend())) {
-                            echo "Spending succeeded";
-                        } else {
-                            echo "Spending failed";
-                        }
-
-                        $repository->persist($personalBudget);
-                    </code></pre>
-            </section>
-
-            <section data-background-color="#3d4852">
-                <blockquote>
-                    <span class="text-red">Reconstitution<br/></span>
-                    the act of building something up again.<br/>
-                </blockquote>
-            </section>
-
-            <section data-background-color="#3d4852">
-                <blockquote>
-                    A <span class="text-red">reconstituted</span> aggregate
-                    is ready to make a <span class="text-red">decision</span>.
-                </blockquote>
-            </section>
-
-<!--            <section>-->
-<!--            <img src="images/15-old-events.svg" />-->
-<!--            </section>-->
-
-<!--            <section>-->
-<!--            <img src="images/16-aggregate-from-events.svg" />-->
-<!--            </section>-->
-
-<!--            <section>-->
-<!--            <img src="images/17-new-events-from-aggregate.svg" />-->
-<!--            </section>-->
-
-            <section>
-                <!--<h3 class="text-red">Reconstitute the Aggregate</h3>-->
-                <h3>
-                    <ol>
-                        <li>Retrieve relevant <span class="text-red">events</span></li>
-                        <li>Create an aggregate <span class="text-red">instance</span></li>
-                        <li>Apply all events to the model</li>
-                    </ol>
-                </h3>
-            </section>
-
-            <section data-title-hidden data-background-color="#fff">
-                    <pre class="language-php"><code data-trim>
-class AggregateRootRepository
-{
-    public function __construct(
-        string $aggregateRootClassName,
-        MessageRepository $messageRepository
-    ) {
-        $this->aggregateRootClassName = $aggregateRootClassName;
-        $this->messages = $messageRepository;
-    }
-
-
-
-}
-                    </code></pre>
-            </section>
-
-            <section data-title-hidden data-background-color="#fff">
-                    <pre class="language-php"><code data-trim>
-class AggregateRootRepository
-{
-    public function retrieve(AggregateRootId $id): object
-    {
-        $className = $this->aggregateRootClassName;
-
-        return $className::reconstituteFromEvents(
-            $id,
-            $this->retrieveAllEvents($id)
-        );
-    }
-
-}
-                    </code></pre>
-            </section>
-
-            <section data-title-hidden data-background-color="#fff">
-                    <pre class="language-php"><code data-trim>
-class AggregateRootRepository
-{
-    private function retrieveAllEvents(AggregateRootId $id): Generator
-    {
-        $messages = $this->messages->retrieveAll($id);
-
-        /** @var Message $message */
-        foreach ($messages as $message) {
-            yield $message->event();
-        }
-    }
-
-}
-                    </code></pre>
             </section>
 
 <!--            <section data-title-hidden data-background-color="#fff">-->
-<!--                    <pre class="language-sql"><code>-->
-<!--                SELECT *-->
-<!--                    FROM `domain_messages`-->
-<!--                    WHERE `aggregate_id` = :aggregate_id-->
-<!--                    ORDER BY `time_of_recording` ASC-->
+<!--                    <pre data-line="1" class="language-php"><code data-trim>-->
+<!--                        $personalBudget = $repository->retrieve($id);-->
+
+<!--                        if ($personalBudget->spend(amount_to_spend())) {-->
+<!--                            echo "Spending succeeded";-->
+<!--                        } else {-->
+<!--                            echo "Spending failed";-->
+<!--                        }-->
+
+<!--                        $repository->persist($personalBudget);-->
 <!--                    </code></pre>-->
 <!--            </section>-->
-            <section data-title-hidden data-background-color="#fff">
-                    <pre class="language-php"><code data-trim>
-class PersonalBudget
-{
-    public static function reconstituteFromEvents(
-        Identifier $id,
-        Generator $events
-    ): PersonalBudget
-    {
-        $budget = new static($id);
-        foreach ($events as $event) $budget->apply($event);
 
-        return $budget;
-    }
-}
-                    </code></pre>
-            </section>
-            <section data-title-hidden data-background-color="#fff">
-                    <pre data-line="11" class="language-php"><code data-trim>
-class PersonalBudget
-{
-    public static function reconstituteFromEvents(
-        Identifier $id,
-        Generator $events
-    ): PersonalBudget
-    {
-        $budget = new static($id);
-        foreach ($events as $event) $budget->apply($event);
+<!--            <section data-title-hidden data-background-color="#fff">-->
+<!--                    <pre class="language-php"><code data-include="bank_entity_repository.php" data-filename="entity_usage.php" data-trim>-->
+<!--                        $personalBudget = $repository->retrieve($id);-->
 
-        return $budget;
-    }
-}
-                    </code></pre>
-            </section>
-<!--            <section>-->
-<!--                <img src="images/messages-to-aggregate.png" alt="" />-->
+<!--                        if ($personalBudget->spend(amount_to_spend())) {-->
+<!--                            echo "Spending succeeded";-->
+<!--                        } else {-->
+<!--                            echo "Spending failed";-->
+<!--                        }-->
+
+<!--                        $repository->persist($personalBudget);-->
+<!--                    </code></pre>-->
 <!--            </section>-->
-
-            <section data-title-hidden data-background-color="#fff">
-                    <pre class="language-php"><code data-include="bank_entity_repository.php" data-filename="entity_usage.php" data-trim>
-                        $personalBudget = $repository->retrieve($id);
-
-                        if ($personalBudget->spend(amount_to_spend())) {
-                            echo "Spending succeeded";
-                        } else {
-                            echo "Spending failed";
-                        }
-
-                        $repository->persist($personalBudget);
-                    </code></pre>
-            </section>
 
             <section>
                 <h3 class="text-left">
-                    In a given <span class="text-red">context</span>,<br/>
+                    Given a <span class="text-red">context</span>,<br/>
                     when handling <span class="text-red">input</span><br/>
                     a <span class="text-red">decision</span> is made<br/>
                     which has an <span class="text-red">outcome</span>.
                 </h3>
             </section>
 
-            <section>
-                <h2>How about <span class="text-red">tests</span>?</h2>
-            </section>
+<!--            <section>-->
+<!--                <h2>How about <span class="text-red">tests</span>?</h2>-->
+<!--            </section>-->
 
 <!--            <section data-background-color="#fff">-->
 <!--                    <pre class="language-php"><code data-include="spend_150_includes.php" data-filename="spend_150.php" data-trim>-->
@@ -1596,22 +1328,22 @@ class PersonalBudget
                     <span class="text-red">Given</span><br/>
                     A context<br/>
                     <span class="text-red">When</span><br/>
-                    Handling input<br/>
+                    Input leads to a decision<br/>
                     <span class="text-red">Then</span><br/>
-                    There is a outcome
+                    There is an outcome
                 </blockquote>
             </section>
 
-            <section data-background-color="#3d4852">
-                <blockquote>
-                    <span class="text-red">Given</span><br/>
-                    Existing events<br/>
-                    <span class="text-red">When</span><br/>
-                    Handling input<br/>
-                    <span class="text-red">Then</span><br/>
-                    New events!
-                </blockquote>
-            </section>
+<!--            <section data-background-color="#3d4852">-->
+<!--                <blockquote>-->
+<!--                    <span class="text-red">Given</span><br/>-->
+<!--                    Existing events<br/>-->
+<!--                    <span class="text-red">When</span><br/>-->
+<!--                    Input leads to a decision<br/>-->
+<!--                    <span class="text-red">Then</span><br/>-->
+<!--                    New events!-->
+<!--                </blockquote>-->
+<!--            </section>-->
 
             <section data-background-color="#fff">
                     <pre class="language-php"><code data-trim>
@@ -1620,41 +1352,16 @@ class PersonalBudget
                          */
                         public function it_allows_to_spend_within_the_budget()
                         {
-                            $id = $this->aggregateRootId();
-
                             $this->given(
                                 new BudgetWasIncreased(100)
-
                             )->when(
-                                new MakePurchase($id, 40)
+                                new MakePurchase(40)
                             )->then(
                                 new PurchaseWasMade(40)
                             );
                         }
                     </code></pre>
             </section>
-
-            <section data-background-color="#fff">
-                    <pre class="language-php"><code data-trim>
-                        /**
-                         * @test
-                         */
-                        public function it_disallows_to_spend_over_budget()
-                        {
-                            $id = $this->aggregateRootId();
-
-                            $this->given(
-                                new BudgetWasIncreased(100),
-                                new PurchaseWasMade(80)
-                            )->when(
-                                new MakePurchase($id, 40)
-                            )->then(
-                                new BudgetWasInsufficient(40)
-                            );
-                        }
-                    </code></pre>
-            </section>
-
 <!--            <section data-background-color="#fff">-->
 <!--                    <pre class="language-php"><code data-trim>-->
 <!--                        /**-->
@@ -1676,63 +1383,59 @@ class PersonalBudget
 <!--                    </code></pre>-->
 <!--            </section>-->
 
-            <section>
-                <h2 class="text-red">When to apply this:</h2>
-                <h3>
-                    <ul>
-                        <li>Process modelling</li>
-                        <li>Auditing requirements</li>
-                        <li>Need to communicate change</li>
-                        <li>Financial Transactions and Accounting</li>
-                    </ul>
-                </h3>
-            </section>
+<!--            <section>-->
+<!--                <h2 class="text-red">When to apply this:</h2>-->
+<!--                <h3>-->
+<!--                    <ul>-->
+<!--                        <li>Process modelling</li>-->
+<!--                        <li>Auditing requirements</li>-->
+<!--                        <li>Financial Transactions or Accounting</li>-->
+<!--                    </ul>-->
+<!--                </h3>-->
+<!--            </section>-->
 
+            <section data-background-color="#3d4852">
+                <blockquote>
+                    <span class="text-red">Benefits</span><br/>
+                    Push over pull (scale++)<br/>
+                    High observability<br/>
+                </blockquote>
+            </section>
+            <section data-background-color="#3d4852">
+                <blockquote>
+                    <span class="text-red">With Event Sourcing</span><br/>
+                    Simple tasks are more work, but difficult tasks are easier.
+                </blockquote>
+            </section>
             <section>
                 <h2 class="text-red">Additional benefits:</h2>
                 <h3>
                     <ul>
-                        <li>Insights on historical events</li>
                         <li>Super scalable</li>
-                        <li>Aligns with event storming</li>
-                        <li>It's super cool and looks great on your resume ;-P</li>
+                        <li>High observability</li>
+                        <li>Insights on historical events</li>
+                        <li>Aligns with Event Storming</li>
                     </ul>
                 </h3>
-            </section>
-
-            <section>
-                <h2 class="text-red">Considerations:</h2>
-                <h3>
-                    <ul>
-                        <li>Invest in DDD</li>
-                        <li>Works well with CQRS</li>
-                        <li>Works well with Hexagonal Architecture</li>
-                    </ul>
-                </h3>
-            </section>
-
-            <section>
-                <h2>With Event Sourcing</h2>
-                <h3>Simple tasks are more work.</h3>
-                <h3 class="text-red">Difficult tasks are possible.</h3>
             </section>
 
             <section>
                 <h2>Down-sides</h2>
+                <h3>
                 <ul>
                     <li>Everything is recorded, and so are your failures.</li>
                     <li>Events outlive your model.</li>
-                    <li>Events are flipping everywhere.</li>
+                    <li>Events are everywhere.</li>
                     <li>Fewer people know about it.</li>
-                    <li>Reconstitution with many events can become a bottleneck, but there are solutions for that.</li>
-                    <li>It puts software development upside-down and inside-out, which can be uncomfortable.</li>
                 </ul>
+                </h3>
             </section>
 
-<!--            <section>-->
-<!--                <img src="static/logo.svg" width="240px" alt=""/>-->
-<!--                <h2>EventSauce</h2>-->
-<!--            </section>-->
+            <section>
+                <img src="static/logo.svg" width="240px" alt=""/>
+                <h2>Event<span class="text-red">Sauce</span></h2>
+                <h3>A pragmatic event<br/>sourcing library</h3>
+            </section>
 
             <section>
                 <h3>That is everything!</h3>
@@ -1746,9 +1449,9 @@ class PersonalBudget
     <script src="dist/reveal.js"></script>
     <script src="plugin/notes/notes.js"></script>
     <script src="plugin/markdown/markdown.js"></script>
-<!--    <script src="plugin/highlight/highlight.js"></script>-->
+<!--    <script src="plugin/highlight/highlight.js_old"></script>-->
     <script src="plugin/prism/prism.js"></script>
-    <script src="plugin/execute/execute.js"></script>
+<!--    <script src="plugin/execute/execute.js"></script>-->
     <script>
         // More info about initialization & config:
         // - https://revealjs.com/initialization/
@@ -1756,6 +1459,7 @@ class PersonalBudget
         Reveal.initialize({
             hash: true,
             center: true,
+            progress: false,
             // disableLayout: true,
 
             transition: 'none',
@@ -1768,7 +1472,7 @@ class PersonalBudget
             // maxScale: 2.0,
 
             // Learn about plugins: https://revealjs.com/plugins/
-            plugins: [ RevealMarkdown, RevealNotes, RevealPrism, RevealExecute ]
+            plugins: [ RevealMarkdown, RevealNotes, RevealPrism ]
         });
     </script>
 </body>

@@ -370,7 +370,7 @@
 
 					var data = JSON.parse( event.data );
 
-					// The overview mode is only useful to the reveal.js instance
+					// The overview mode is only useful to the reveal.js_old instance
 					// where navigation occurs so we don't sync it
 					if( data.state ) delete data.state.overview;
 
@@ -387,7 +387,7 @@
 							delete pendingCalls[data.callId];
 						}
 					}
-					// Messages sent by the reveal.js inside of the current slide preview
+					// Messages sent by the reveal.js_old inside of the current slide preview
 					else if( data && data.namespace === 'reveal' ) {
 						if( /ready/.test( data.eventName ) ) {
 							// Send a message back to notify that the handshake is complete
@@ -403,7 +403,7 @@
 				} );
 
 				/**
-				 * Asynchronously calls the Reveal.js API of the main frame.
+				 * Asynchronously calls the Reveal.js_old API of the main frame.
 				 */
 				function callRevealApi( methodName, methodArguments, callback ) {
 

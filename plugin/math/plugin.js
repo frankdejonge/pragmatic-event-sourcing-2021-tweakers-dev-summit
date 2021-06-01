@@ -1,12 +1,12 @@
 /**
  * A plugin which enables rendering of math equations inside
- * of reveal.js slides. Essentially a thin wrapper for MathJax.
+ * of reveal.js_old slides. Essentially a thin wrapper for MathJax.
  *
  * @author Hakim El Hattab
  */
 const Plugin = () => {
 
-	// The reveal.js instance this plugin is attached to
+	// The reveal.js_old instance this plugin is attached to
 	let deck;
 
 	let defaultOptions = {
@@ -69,7 +69,7 @@ const Plugin = () => {
 
 				MathJax.Hub.Config( options );
 
-				// Typeset followed by an immediate reveal.js layout since
+				// Typeset followed by an immediate reveal.js_old layout since
 				// the typesetting process could affect slide height
 				MathJax.Hub.Queue( [ 'Typeset', MathJax.Hub, deck.getRevealElement() ] );
 				MathJax.Hub.Queue( deck.layout );
