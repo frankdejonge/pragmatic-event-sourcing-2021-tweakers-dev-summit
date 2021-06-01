@@ -11,4 +11,3 @@ node_modules/
 .sass-cache
 dist/*.map
 /vendor/
-/dist/
