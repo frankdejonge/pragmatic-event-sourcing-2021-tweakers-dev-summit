@@ -55,6 +55,12 @@
                     <span class="text-red">Frank de Jonge</span><br/>
                     Staff Software Engineer at Mollie Payments
                 </blockquote>
+                <aside class="notes">
+                    <p>
+                        My name is Frank de Jonge, I'm a software engineer at Mollie, we process payments,
+                        which means, amongst other things, we talk to a lot of FTP servers so you don't have to.
+                    </p>
+                </aside>
             </section>
 
 <!--            <section data-background-color="#fff">-->
@@ -87,6 +93,23 @@
                 <blockquote>
                     <span class="text-red">Event Sourcing</span><br/> is a way to create software models using events.
                 </blockquote>
+                <aside class="notes">
+                    <p>But we're not here today to talk about FTP servers, we're here to talk about Event Sourcing.</p>
+                    <p>
+                        Event sourcing, is a technique that I've used for a good number
+                        of years and have used it for both fun and profit.
+                    </p>
+                    <p>
+                        During this talk I have a little under 80 slides to share my perspective on
+                        the subject and hopefully demystify some of the aspects of the technique.
+                    </p>
+                    <p>
+                        So let's not waste any time and dive right in.
+                    </p>
+                    <p>
+                        Event sourcing is a way to create software models using events.
+                    </p>
+                </aside>
             </section>
 
             <section data-title-hidden data-background-color="#fff">
@@ -101,6 +124,13 @@
                             return true;
                         }
                     </code></pre>
+                <aside class="notes">
+                    <p>
+                        First of I want to get to the fundamental difference of event sourcing
+                        in a slimmed down way, to get to the essence of it.
+                    </p>
+                    <p>Here you see a bit of code</p>
+                </aside>
             </section>
             <section data-title-hidden data-background-color="#fff">
                     <pre data-line="1" class="language-javascript"><code data-trim>
@@ -114,6 +144,9 @@
                             return true;
                         }
                     </code></pre>
+                <aside class="notes">
+                    <p>In this code, we have a balance, is system context</p>
+                </aside>
             </section>
             <section data-title-hidden data-background-color="#fff">
                     <pre data-line="3" class="language-javascript"><code data-trim>
@@ -127,6 +160,9 @@
                             return true;
                         }
                     </code></pre>
+                <aside class="notes">
+                    <p>We have some input, the amount we want to spend</p>
+                </aside>
             </section>
             <section data-title-hidden data-background-color="#fff">
                     <pre data-line="5" class="language-javascript"><code data-trim>
@@ -140,6 +176,11 @@
                             return true;
                         }
                     </code></pre>
+
+                <aside class="notes">
+                    <p>We have a decision, a business rule, an invariant. Something that must always hold true in a system</p>
+                    <p>In this case the rule is that we can not spend more than we own.</p>
+                </aside>
             </section>
 
             <section data-title-hidden data-background-color="#fff">
@@ -154,6 +195,10 @@
                             return true; // outcome
                         }
                     </code></pre>
+                <aside class="notes">
+                    <p>and lastly we have an outcome</p>
+                    <p>for the happy path, when we have sufficient balance, we deduct the balance and return `true`</p>
+                </aside>
             </section>
             <section data-title-hidden data-background-color="#fff">
                     <pre class="language-javascript"><code data-trim>
@@ -167,6 +212,16 @@
                             return true;
                         }
                     </code></pre>
+                <aside class="notes">
+                    <p>
+                        Although very simplified, we could say that many of the application that are written in a
+                        CRUD style adhere to this pattern. We load a state from the DB, perform some checks, update
+                        the state in the database.
+                    </p>
+                    <p>
+                        We already stated that event sourcing uses events, so what's the difference? And where is it?
+                    </p>
+                </aside>
             </section>
 
             <section data-title-hidden data-background-color="#fff">
@@ -181,6 +236,11 @@
                             return true;
                         }
                     </code></pre>
+                <aside class="notes">
+                    <p>The first part where event sourcing is different is in the building of the context</p>
+                    <p>Instead of loading a state, a series of delta's are loaded which is reduced to a state.</p>
+                    <p>Here we represent these delta's as positive and negative numbers, which we can sum to a balance.</p>
+                </aside>
             </section>
 
             <section data-title-hidden data-background-color="#fff">
@@ -195,10 +255,25 @@
                             return true;                           // outcome
                         }
                     </code></pre>
+                <aside class="notes">
+                    <p>
+                        the second part that is different is in the outcome
+                    </p>
+                    <p>
+                        the primary output of an event sourced model is not an updated balance, it's a newly
+                    recorded event.
+                    </p>
+                    <p>
+                        apart from it being just different, it is also very powerful
+                    </p>
+                </aside>
             </section>
 
             <section>
                 <img src="images/0-state.svg" />
+                <aside class="notes">
+                    <p></p>
+                </aside>
             </section>
             <section>
                 <img src="images/1-initial-state.svg" />
@@ -628,7 +703,7 @@ class PersonalBudget
                     <pre class="language-php"><code data-trim>
 class PersonalBudget
 {
-    public function spend(int $amount)
+    public function spend(int $amount): bool
     {
         if ($this->budget < $amount) {
             return false;
@@ -645,7 +720,7 @@ class PersonalBudget
                     <pre class="language-php"><code data-trim>
 class PersonalBudget
 {
-    public function spend(int $amount)
+    public function spend(int $amount): bool
     {
         if ($this->budget < $amount) {
             return false;
